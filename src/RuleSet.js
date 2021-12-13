@@ -1,17 +1,18 @@
 const assert = require('assert');
-const md5 = require('md5');
-const uniqueid = require('uniqueid');
+const hashFnv32a = require('./hashFnv32a');
 const Action = require('./Action');
 const Premise = require('./Premise');
 const Rule = require('./Rule');
 
 class RuleSet {
   constructor() {
+    let a = 0;
+    let p = 0;
     this.actions = [];
     this.premises = [];
     this.premisesByHash = {};
-    this.nextActionId = uniqueid('a');
-    this.nextPremiseId = uniqueid('p');
+    this.nextActionId = function () { return `a${a++}`; };
+    this.nextPremiseId = function () { return `p${p++}`; };
     this.actionsByActivationGroup = {}; // hash
   }
 
@@ -35,7 +36,7 @@ class RuleSet {
     walker(rule);
     // premises
     [...whens].forEach((when, index) => {
-      const hash = md5(when.toString()); // is function already introduced by other rule?
+      const hash = hashFnv32a(when.toString()); // is function already introduced by other rule?
       let premise = this.premisesByHash[hash];
       if (!premise) { // create new premise
         premise = new Premise({

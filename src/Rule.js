@@ -1,9 +1,24 @@
-const isBoolean = require('lodash/isBoolean');
-const isFunction = require('lodash/isFunction');
-const isInteger = require('lodash/isInteger');
-const isString = require('lodash/isString');
 const assert = require('assert');
-const arrify = require('arrify');
+
+function arrify(value) {
+  if (value === null || value === undefined) {
+    return [];
+  }
+
+  if (Array.isArray(value)) {
+    return value;
+  }
+
+  if (typeof value === 'string') {
+    return [value];
+  }
+
+  if (typeof value[Symbol.iterator] === 'function') {
+    return [...value];
+  }
+
+  return [value];
+}
 
 class Rule {
   constructor({
@@ -25,7 +40,7 @@ class Rule {
       '"name" is required',
     );
     assert(
-      isString(this.name),
+      typeof this.name === 'string',
       '"name" must be a string',
     );
     assert(
@@ -33,7 +48,7 @@ class Rule {
       '"when" is required with at least one premise',
     );
     assert(
-      this.when.reduce((acc, premise) => acc && isFunction(premise), true),
+      this.when.reduce((acc, premise) => acc && typeof premise === 'function', true),
       '"when" must be a function or an array of functions',
     );
     assert(
@@ -41,15 +56,15 @@ class Rule {
       '"then" is required',
     );
     assert(
-      isFunction(this.then),
+      typeof this.then === 'function',
       '"then" must be a function',
     );
     assert(
-      isInteger(this.priority),
+      typeof this.priority === 'number',
       '"priority" must be an integer',
     );
     assert(
-      isBoolean(this.final),
+      typeof this.final === 'boolean',
       '"final" must be a boolean',
     );
     assert(
@@ -57,7 +72,7 @@ class Rule {
       '"extend" must be a Rule or an array of Rules',
     );
     assert(
-      !this.activationGroup || isString(this.activationGroup),
+      !this.activationGroup || typeof this.activationGroup === 'string',
       '"activationGroup" must be a string',
     );
   }

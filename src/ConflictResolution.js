@@ -1,4 +1,6 @@
-const intersection = require('lodash/intersection');
+function intersection(array1, array2) {
+  return array1.filter((element) => array2.includes(element));
+}
 
 class ConflictResolution {
   constructor({ strategy = 'ps', logger }) {
