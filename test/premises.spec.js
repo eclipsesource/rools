@@ -1,6 +1,6 @@
-const md5 = require('md5');
 const { Rools, Rule } = require('..');
 require('./setup');
+const hashFnv32a = require('../src/hashFnv32a');
 
 describe('Rools.register() / optimization of premises', () => {
   it('should not merge premises if not identical', async () => {
@@ -155,7 +155,7 @@ describe('Rools.register() / optimization of premises', () => {
       ({ context }) => context.bar === 'buz0',
     ];
     const set = new Set();
-    fns.forEach((f) => set.add(md5(f.toString())));
+    fns.forEach((f) => set.add(hashFnv32a(f.toString())));
     expect(set.size).to.be.equal(4);
   });
 
@@ -167,7 +167,7 @@ describe('Rools.register() / optimization of premises', () => {
       foo,
     ];
     const set = new Set();
-    fns.forEach((f) => set.add(md5(f.toString())));
+    fns.forEach((f) => set.add(hashFnv32a(f.toString())));
     expect(set.size).to.be.equal(3);
   });
 });
